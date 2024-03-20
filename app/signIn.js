@@ -1,6 +1,7 @@
 import { Fontisto } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import {
+  Alert,
   Image,
   Pressable,
   StatusBar,
@@ -13,7 +14,24 @@ import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useRef } from "react";
+import Loading from "../components/Loading";
 function SignIn() {
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
+  const handleLogin = async () => {
+    console.log(emailRef.current);
+    console.log(passwordRef.current);
+
+    if (!emailRef.current || !passwordRef.current) {
+      Alert.alert("SignIn", "Either email or password is missing...");
+    }
+    setLoading(true);
+  };
+
+  const [loading, setLoading] = useState(false);
+
   return (
     <View
       className="flex-1"
@@ -43,7 +61,12 @@ function SignIn() {
             style={{ height: hp(7) }}
           >
             <Fontisto name="email" size={24} color="gray" />
-            <TextInput placeholder="Email" />
+            <TextInput
+              onChangeText={(val) => {
+                emailRef.current = val;
+              }}
+              placeholder="Email"
+            />
           </View>
           <View className="gap-3">
             <View
@@ -51,50 +74,49 @@ function SignIn() {
               style={{ height: hp(7) }}
             >
               <MaterialIcons name="password" size={24} color="gray" />
-              <TextInput placeholder="Password" />
+              <TextInput
+                secureTextEntry
+                onChangeText={(val) => {
+                  passwordRef.current = val;
+                }}
+                placeholder="Password"
+              />
             </View>
             <Pressable>
               <Text className="text-right text-gray-500">Forgot password</Text>
             </Pressable>
           </View>
-          {/* <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "indigo",
-              height: "100vh",
-            }}
-          >
-            <TouchableOpacity className="flex-1  justify-center items-center">
-              <Text style={{}} className=" text-white">
-                Sign In
-              </Text>
-            </TouchableOpacity>
-          </View> */}
-
-          <View
-            // style={{
-            //   backgroundColor: "indigo",
-            //   height: "100vh",
-            // }}
-            className="bg-indigo-500 rounded-lg"
-            style={{ height: hp(7) }}
-          >
-            <TouchableOpacity
-              style={{
-                height: hp(7),
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text
-                style={{ color: "white" }}
-                className="text-white font-bold tracking-wider"
+          <View className="">
+            {loading ? (
+              <View className="items-center">
+                <Loading size={20} />
+              </View>
+            ) : (
+              <View
+                // style={{
+                //   backgroundColor: "indigo",
+                //   height: "100vh",
+                // }}
+                className="bg-indigo-500 rounded-lg"
+                style={{ height: hp(7) }}
               >
-                Sign In
-              </Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                  style={{
+                    height: hp(7),
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={handleLogin}
+                >
+                  <Text
+                    style={{ color: "white" }}
+                    className="text-white font-bold tracking-wider"
+                  >
+                    Sign In
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
         <View className="flex-row justify-center gap-2">
