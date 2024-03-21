@@ -10,18 +10,19 @@ const MainLayout = () => {
   const segments = useSegments();
 
   useEffect(() => {
-    //check user authenticaed ot not
+    //This got executed  when there is a auth change
+    // to redirect to appropriate screens
 
-    console.log("segments ", segments);
-
-    if (typeof isAuthenticated == "undefined") return;
+    if (typeof isAuthenticated == "undefined") {
+      return;
+    }
     const inApp = segments[0] == "(app)";
     if (isAuthenticated && !inApp) {
-      console.log("first", segments[0]);
-      //redirect home
+      //replace and redirect to home
       router.replace("home");
     } else if (isAuthenticated == false) {
-      //redirect signin
+      //replace and redirect to sign in
+
       router.replace("signIn");
     }
   }, [isAuthenticated]);

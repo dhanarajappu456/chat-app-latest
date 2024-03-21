@@ -7,7 +7,9 @@ function CustomKeyBoardView({ children }) {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>{children}</ScrollView>
+      <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+        {children}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }

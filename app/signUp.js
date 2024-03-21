@@ -1,5 +1,5 @@
 import { AntDesign, Fontisto } from "@expo/vector-icons";
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import {
   Alert,
   Image,
@@ -16,6 +16,9 @@ import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import CustomKeyBoardView from "../components/CustomKeyBoardView";
+import Loading from "../components/Loading";
+import { useAuth } from "../context/authContext";
+
 function SignUp() {
   const userNameRef = useRef(null);
 
@@ -24,20 +27,28 @@ function SignUp() {
 
   const profileRef = useRef(null);
 
-  const handleSignUp = () => {
-    console.log(
-      userNameRef.current,
-      passwordRef.current,
-      emailRef.current,
-      profileRef.current
-    );
+  const { register } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const handleSignUp = async () => {
     if (
       !userNameRef.current ||
       !passwordRef.current ||
       !emailRef.current ||
       !profileRef.current
-    )
+    ) {
       Alert.alert("Signup", "Some fields are missing...");
+      return;
+    }
+
+    setLoading(true);
+    const response = await register(
+      userNameRef.current,
+      passwordRef.current,
+      emailRef.current,
+      profileRef.current
+    );
+    setLoading(false);
+    Alert.alert("SignUp", response.message);
 
     return;
   };
@@ -72,6 +83,7 @@ function SignUp() {
             >
               <AntDesign name="user" size={24} color="gray" />
               <TextInput
+                className="flex-1"
                 onChangeText={(val) => (userNameRef.current = val)}
                 placeholder="Username"
               />
@@ -82,6 +94,7 @@ function SignUp() {
             >
               <Fontisto name="email" size={24} color="gray" />
               <TextInput
+                className="flex-1"
                 onChangeText={(val) => (emailRef.current = val)}
                 placeholder="Email"
               />
@@ -92,17 +105,19 @@ function SignUp() {
             >
               <MaterialIcons name="password" size={24} color="gray" />
               <TextInput
+                className="flex-1"
                 onChangeText={(val) => (passwordRef.current = val)}
                 placeholder="Password"
                 secureTextEntry
               />
             </View>
             <View
-              className="rounded-lg  p-2 items-center flex-row bg-gray-100 gap-4"
+              className="rounded-lg  p-2  flex-row items-center bg-gray-100 gap-4"
               style={{ height: hp(7) }}
             >
               <AntDesign name="profile" size={24} color="gray" />
               <TextInput
+                className="flex-1"
                 onChangeText={(val) => (profileRef.current = val)}
                 placeholder="ProfileUrl"
               />
@@ -124,29 +139,37 @@ function SignUp() {
             </TouchableOpacity>
           </View> */}
 
-            <View
-              // style={{
-              //   backgroundColor: "indigo",
-              //   height: "100vh",
-              // }}
-              className="bg-indigo-500 rounded-lg"
-              style={{ height: hp(7) }}
-            >
-              <TouchableOpacity
-                style={{
-                  height: hp(7),
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                onPress={handleSignUp}
-              >
-                <Text
-                  style={{ color: "white" }}
-                  className="text-white font-bold tracking-wider"
+            <View>
+              {loading ? (
+                <View className="items-center">
+                  <Loading size={15} />
+                </View>
+              ) : (
+                <View
+                  // style={{
+                  //   backgroundColor: "indigo",
+                  //   height: "100vh",
+                  // }}
+                  className="bg-indigo-500 rounded-lg"
+                  style={{ height: hp(7) }}
                 >
-                  SignUp
-                </Text>
-              </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{
+                      height: hp(7),
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onPress={handleSignUp}
+                  >
+                    <Text
+                      style={{ color: "white" }}
+                      className="text-white font-bold tracking-wider"
+                    >
+                      SignUp
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
 
             <View className="flex-row justify-center gap-2">
