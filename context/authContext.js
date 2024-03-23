@@ -5,7 +5,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 const { createContext, useState, useEffect, useContext } = require("react");
 
@@ -16,32 +16,40 @@ export const AuthContextProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(undefined);
 
   useEffect(() => {
-    console.log("user is here ", user);
     const unsub = onAuthStateChanged(auth, async (user) => {
-      console.log("Auth state changed");
       if (user) {
         const keys = await AsyncStorage.getAllKeys();
 
         setIsAuthenticated(true);
         setUser(user);
+        updateUser(user.uid);
       } else {
         setIsAuthenticated(false);
         setUser(null);
       }
       return unsub;
     });
-    // setInterval(() => {
-    //   setIsAuthenticated(false);
-    // }, 3000);
-    //on auth change
   }, []);
+
+  const updateUser = async (userId) => {
+    const docRef = doc(db, "users", userId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      let data = docSnap.data();
+      setUser({
+        ...user,
+        username: data.username,
+        profileUrl: data.profileUrl,
+        userId: data.userId,
+      });
+    }
+  };
   //for login
   const login = async (email, password) => {
     try {
       const response = await signInWithEmailAndPassword(auth, email, password);
       return { success: true, message: "Logged in..." };
     } catch (e) {
-      console.log(e.message);
       return { success: false, message: "Error in logging in" };
     }
   };
@@ -62,8 +70,6 @@ export const AuthContextProvider = ({ children }) => {
         email,
         password
       );
-
-      console.log("response user", response?.user);
 
       await setDoc(doc(db, "users", response?.user?.uid), {
         username,
