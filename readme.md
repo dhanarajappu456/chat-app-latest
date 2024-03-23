@@ -43,15 +43,6 @@ To run the chat app locally, follow these steps:
 
 Contributions to the project are welcome! If you encounter any bugs, have feature requests, or would like to contribute code, please feel free to submit a pull request or open an issue on GitHub.
 
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-- Special thanks to the developers and contributors of the libraries and frameworks used in this project.
-- Icons provided by [FontAwesome](https://fontawesome.com/).
-
 ## Contact
 
 For any inquiries or support, please contact [your email address].
