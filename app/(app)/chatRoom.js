@@ -36,6 +36,8 @@ function ChatRoom() {
 
   const textRef = useRef(null);
   useEffect(() => {
+    //creating the unique room id b/w 2 user
+    //user1id - user2ids
     createRoomIfNotExists();
     getSound();
 
@@ -44,7 +46,7 @@ function ChatRoom() {
     const docRef = doc(db, "rooms", roomId);
     const messageRef = collection(docRef, "messages");
     const q = query(messageRef, orderBy("createdAt", "asc"));
-
+    // adds the listener for any database change that get updated in realtime
     let unsub = onSnapshot(q, (snapshot) => {
       let allMessages = snapshot.docs.map((doc) => {
         return doc.data();
@@ -60,9 +62,8 @@ function ChatRoom() {
     );
 
     setSound(sound);
-    //await sound.playAsync();
   };
-
+  // sound for the send
   const playSound = async () => {
     if (sound) {
       await sound.replayAsync();
