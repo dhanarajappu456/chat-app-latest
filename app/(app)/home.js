@@ -61,7 +61,7 @@ function Home() {
     <View className="flex-1 bg-white">
       <StatusBar style="light" />
       {users.length > 0 ? (
-        <ChatList users={users} />
+        <ChatList users={users} currentUser={user} />
       ) : (
         <View className="flex-1   justify-center items-center">
           <ActivityIndicator size="large" />

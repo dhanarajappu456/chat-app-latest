@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import React from "react";
 import { FlatList, View } from "react-native";
 import ChatItem from "./ChatItem";
-function ChatList({ users }) {
+function ChatList({ users, currentUser }) {
   return (
     <View className="mt-2">
       {/* <View className="flex-row items-center justify-between">
@@ -28,6 +28,7 @@ function ChatList({ users }) {
             noBorder={index + 1 == users.length}
             item={item}
             index={index}
+            currentUser={currentUser}
           />
         )}
       />

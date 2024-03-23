@@ -15,6 +15,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import {
   Alert,
+  Keyboard,
   ScrollView,
   TextInput,
   TouchableOpacity,
@@ -35,6 +36,12 @@ function ChatRoom() {
   const inputRef = useRef(null);
 
   const textRef = useRef(null);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    updateScroll();
+  }, [messages]);
+
   useEffect(() => {
     //creating the unique room id b/w 2 user
     //user1id - user2ids
@@ -53,9 +60,23 @@ function ChatRoom() {
       });
       setMessages([...allMessages]);
     });
-    return unsub;
+
+    const keyBoardListener = Keyboard.addListener(
+      "keyboardDidShow",
+      updateScroll
+    );
+
+    return () => {
+      unsub();
+      keyBoardListener.remove();
+    };
   }, []);
 
+  const updateScroll = () => {
+    setTimeout(() => {
+      scrollRef?.current?.scrollToEnd({ animated: false });
+    }, 10);
+  };
   const getSound = async () => {
     const { sound } = await Audio.Sound.createAsync(
       require("../../assets/sounds/send.mp3")
@@ -115,19 +136,20 @@ function ChatRoom() {
       <View className="h-1 border-b border-neutral-200" />
       <View className="flex-1 bg-white overflow-visible">
         <ScrollView
+          ref={scrollRef}
           showsVerticalScrollIndicator={false}
           className="pl-2 pr-2 flex-1 bg-white"
         >
           <MessageList messages={messages} currentUserId={user?.userId} />
         </ScrollView>
-        <View className="flex-row  justify-between p-2 rounded-full bg-white border border-neutral-300">
+        <View className="flex-row  m-2 p-2 justify-between  rounded-full bg-white border border-neutral-300">
           <TextInput
             ref={inputRef}
             className="flex-1 mr-2"
             placeholder="Type message..."
             onChangeText={(val) => (textRef.current = val)}
           ></TextInput>
-          <View className="bg-neutral-200 p-2 rounded-full">
+          <View className="bg-neutral-200 p-3  rounded-full">
             <TouchableOpacity onPress={handleSend}>
               <FontAwesome name="send" size={hp(2.7)} color="#737373" />
             </TouchableOpacity>
